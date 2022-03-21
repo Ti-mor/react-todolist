@@ -1,34 +1,23 @@
 import React, { Component } from "react"
+import { Button, Input, List } from "antd";
 import store from "./store";
 import {
   getInputChangeAction,
   getAddItemAction,
-  getDeleteItemAction,
-  // getInitListAction,
-  initListData
+  getDeleteItemAction
 } from './store/actionCreators'
-import TodoListUI from './TodoListUI'
 
 import 'antd/dist/antd.css';
 
-class TodoList extends Component { // 容器组件
+// 普通组件
+class TodoList extends Component {
   constructor(props) {
     super(props)
     this.state = store.getState()
     this.handleInputChange = this.handleInputChange.bind(this)
     this.handleStoreChange = this.handleStoreChange.bind(this)
     this.handleBtnClick = this.handleBtnClick.bind(this)
-    this.handleItemDelete = this.handleItemDelete.bind(this)
     store.subscribe(this.handleStoreChange)
-  }
-  componentDidMount() {
-    // setTimeout(() => {
-    //   const data = ['hello', 'dell', 'lee']
-    //   const action = getInitListAction(data)
-    //   store.dispatch(action)
-    // }, 0)
-    const action = initListData()
-    store.dispatch(action)
   }
   handleInputChange(e) {
     const action = getInputChangeAction(e.target.value)
@@ -46,13 +35,25 @@ class TodoList extends Component { // 容器组件
     store.dispatch(action)
   }
   render() {
-    return <TodoListUI
-             inputValue={this.state.inputValue}
-             list={this.state.list}
-             handleInputChange={this.handleInputChange}
-             handleBtnClick={this.handleBtnClick}
-             handleItemDelete={this.handleItemDelete}
-           />
+    return (
+      <div style={{margin: 10}}>
+        <Input
+          style={{marginRight: 10, width: 300}}
+          placeholder="todo list"
+          value={this.state.inputValue}
+          onChange={this.handleInputChange}
+        />
+        <Button type="primary" onClick={this.handleBtnClick}>提交</Button>
+        <List
+          style={{marginTop: 10, width: 300}}
+          bordered
+          dataSource={this.state.list}
+          renderItem={(item, index) => (
+            <List.Item onClick={this.handleItemDelete.bind(this, index)}>{item}</List.Item>
+          )}
+        />
+      </div>
+    )
   }
 }
 
